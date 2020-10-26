@@ -1,11 +1,14 @@
 package com.example.kris.handwriting.util
 
 import android.util.Log
-import com.example.kris.handwriting.mesh.MeshPoint
+import com.example.kris.handwriting.legacy.MeshPoint
 import java.util.*
 
 object Smoother {
     private val tmp = ArrayList<MeshPoint>()
+
+    var iterations = 2
+    var simplifyTolerance = 35.0
 
     fun resolve(input: ArrayList<MeshPoint>, output: ArrayList<MeshPoint>) {
         var input = input
@@ -41,16 +44,13 @@ object Smoother {
         }
     }
 
-    var iterations = 2
-    var simplifyTolerance = 35.0
-
     fun linearInterpolation(a: Float, b: Float, t: Float): Float {
         val out = Math.abs(a - b) * t + a
         Log.d("<^>", " $a $b $t out: $out")
         return out
     }
 
-    fun smooth(input: ArrayList<MeshPoint>, output: ArrayList<MeshPoint>) {
+    private fun smooth(input: ArrayList<MeshPoint>, output: ArrayList<MeshPoint>) {
         //expected size
         output.clear()
         output.ensureCapacity(input.size * 2)
@@ -60,20 +60,20 @@ object Smoother {
         for (i in 0 until input.size - 1) {
             val p0 = input[i]
             val p1 = input[i + 1]
-            val Q = MeshPoint(
+            val q = MeshPoint(
                 0.75f * p0.point.x + 0.25f * p1.point.x,
                 0.75f * p0.point.y + 0.25f * p1.point.y,
                 p0.color.interpolate(p1.color, 0.25f),
                 p0.age * 0.75f + p1.age * .25f
             )
-            val R = MeshPoint(
+            val r = MeshPoint(
                 0.25f * p0.point.x + 0.75f * p1.point.x,
                 0.25f * p0.point.y + 0.75f * p1.point.y,
                 p0.color.interpolate(p1.color, 0.75f),
                 p0.age * 0.25f + p1.age * .75f
             )
-            output.add(Q)
-            output.add(R)
+            output.add(q)
+            output.add(r)
         }
         //last element
         output.add(input[input.size - 1])
@@ -81,7 +81,7 @@ object Smoother {
 
     //simple distance-based simplification
     //adapted from simplify.js
-    fun simplify(points: ArrayList<MeshPoint>, sqTolerance: Double, out: ArrayList<MeshPoint>) {
+    private fun simplify(points: ArrayList<MeshPoint>, sqTolerance: Double, out: ArrayList<MeshPoint>) {
         val len = points.size
         var point: MeshPoint
         var prevPoint = points[0]

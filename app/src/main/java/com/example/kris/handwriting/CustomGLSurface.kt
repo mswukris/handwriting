@@ -2,6 +2,7 @@ package com.example.kris.handwriting;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.view.MotionEvent;
+import com.example.kris.handwriting.paint.PaintType
 
 
 class CustomGLSurface(context: Context): GLSurfaceView(context) {
@@ -35,7 +36,7 @@ class CustomGLSurface(context: Context): GLSurfaceView(context) {
     override fun onTouchEvent(event: MotionEvent): Boolean {
         when (event.action) {
             MotionEvent.ACTION_MOVE -> renderer.processEventMove(event)
-            MotionEvent.ACTION_DOWN -> renderer.processEventDown(paintType)
+            MotionEvent.ACTION_DOWN -> renderer.processEventDown(event, paintType)
             MotionEvent.ACTION_UP -> renderer.processEventUp()
         }
         return true

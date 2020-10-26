@@ -1,4 +1,4 @@
-package com.example.kris.handwriting.mesh
+package com.example.kris.handwriting.legacy
 
 import android.content.Context
 import android.opengl.GLES20

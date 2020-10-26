@@ -1,7 +1,8 @@
-package com.example.kris.handwriting.mesh
+package com.example.kris.handwriting.paint
 
 import com.example.kris.handwriting.CustomGLSurface
 import com.example.kris.handwriting.IOpenGLObject
+import com.example.kris.handwriting.legacy.MeshPoint
 import com.example.kris.handwriting.util.ColorV4
 import com.example.kris.handwriting.util.Vector
 import java.nio.ByteBuffer
@@ -11,7 +12,7 @@ import java.nio.IntBuffer
 import java.util.concurrent.ConcurrentLinkedQueue
 import kotlin.collections.ArrayList
 
-abstract class MeshBase(var screenHeight: Float, var glSurface: CustomGLSurface): IOpenGLObject {
+abstract class PaintBase(var screenHeight: Float, var glSurface: CustomGLSurface): IOpenGLObject {
 
     var meshPointQueue: ConcurrentLinkedQueue<MeshPoint> = ConcurrentLinkedQueue()
     var indices = IntArray(0)
@@ -84,5 +85,19 @@ abstract class MeshBase(var screenHeight: Float, var glSurface: CustomGLSurface)
 
     fun clearAllPoint() {
         meshPointQueue.clear()
+    }
+
+    fun checkSelected(selectedScreenPoint: Vector): Boolean {
+        val point = convertToGLCoords(selectedScreenPoint)
+        for (meshPoint in meshPointQueue) {
+            if (selectedScreenPoint.equals(point)) {
+                return true
+            }
+        }
+        return false
+    }
+
+    fun convertToGLCoords(inVector: Vector): Vector {
+        return Vector(inVector.x, screenHeight - inVector.y)
     }
 }

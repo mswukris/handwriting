@@ -4,8 +4,8 @@ import android.app.Activity
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageButton
 import android.widget.RelativeLayout
+import com.example.kris.handwriting.paint.PaintType
 
 class MainActivity : Activity() {
 

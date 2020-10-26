@@ -1,4 +1,4 @@
-package com.example.kris.handwriting
+package com.example.kris.handwriting.paint
 
 enum class PaintType {
     PEN,

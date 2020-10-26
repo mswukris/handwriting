@@ -10,8 +10,9 @@ import android.util.Log
 import android.view.MotionEvent
 import com.example.kris.handwriting.*
 import com.example.kris.handwriting.util.Vector
-import com.example.kris.handwriting.mesh.LegacyMesh
-import com.example.kris.handwriting.mesh.MousePoint
+import com.example.kris.handwriting.legacy.LegacyMesh
+import com.example.kris.handwriting.legacy.MousePoint
+import com.example.kris.handwriting.paint.SwipeMesh
 import com.example.kris.handwriting.util.ColorV4
 import com.example.kris.handwriting.util.Smoother
 import java.util.*

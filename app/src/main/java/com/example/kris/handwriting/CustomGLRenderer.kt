@@ -5,9 +5,12 @@ import android.opengl.GLSurfaceView
 import android.opengl.Matrix
 import android.util.Log
 import android.view.MotionEvent
-import com.example.kris.handwriting.mesh.MeshBase
-import com.example.kris.handwriting.mesh.MeshPoint
-import com.example.kris.handwriting.mesh.MousePoint
+import com.example.kris.handwriting.paint.PaintBase
+import com.example.kris.handwriting.legacy.MeshPoint
+import com.example.kris.handwriting.legacy.MousePoint
+import com.example.kris.handwriting.paint.PaintType
+import com.example.kris.handwriting.paint.Pen
+import com.example.kris.handwriting.paint.SwipeMesh
 import com.example.kris.handwriting.util.ColorV4
 import java.util.concurrent.ConcurrentLinkedQueue
 import javax.microedition.khronos.egl.EGLConfig
@@ -25,7 +28,7 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     private val mtrxView = FloatArray(16)
     private val mtrxProjectionAndView = FloatArray(16)
 
-    var meshes: ArrayList<MeshBase>? = null
+    var paints: ArrayList<PaintBase>? = null
 
     var mMousePoints: ConcurrentLinkedQueue<MousePoint>? = null
     private lateinit var mousePoints: FloatArray
@@ -47,15 +50,12 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     }
 
     override fun onDrawFrame(unused: GL10) {
-        // Get the current time
         val now = System.currentTimeMillis()
         // We should make sure we are valid and sane
         if (lastTime > now) return
         // Get the amount of time the last frame took.
         val elapsed = now - lastTime
 
-        // Update our example
-        // Render our example
         render(mtrxProjectionAndView)
         // Save the current time to see how long it took <img src="http://androidblog.reindustries.com/wp-includes/images/smilies/icon_smile.gif" alt=":)" class="wp-smiley"> .
         lastTime = now
@@ -64,19 +64,18 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     private fun render(mtrxProjectionAndView: FloatArray) {
         // clear Screen and Depth Buffer, we have set the clear color as black.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        for (aMesh in meshes!!) {
+        for (aMesh in paints!!) {
             aMesh.draw(mtrxProjectionAndView)
         }
     }
 
     override fun onSurfaceChanged(gl: GL10, width: Int, height: Int) {
-        // We need to know the current width and height.
         Log.d(tag, "Surface Changed start")
         surfaceLoaded = false
         screenWidth = width.toFloat()
         screenHeight = height.toFloat()
 
-        for (aMesh in meshes!!) {
+        for (aMesh in paints!!) {
             aMesh.screenHeight = height.toFloat()
         }
 
@@ -106,7 +105,7 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
         Log.d(tag, "Surface Create started")
         surfaceLoaded = false
         
-        meshes = ArrayList()
+        paints = ArrayList()
         mMousePoints = ConcurrentLinkedQueue()
 
         // Set our shader program
@@ -128,10 +127,11 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
         Log.d(tag, "Surface Created ended")
     }
 
-    fun processEventDown(paintType: PaintType) {
+    fun processEventDown(event: MotionEvent, paintType: PaintType) {
         when(paintType) {
-            PaintType.PEN -> meshes!!.add(Pen(screenHeight, surface))
-            PaintType.BRUSH -> meshes!!.add(SwipeMesh(screenHeight, surface))
+            PaintType.PEN -> paints!!.add(Pen(screenHeight, surface))
+            PaintType.BRUSH -> paints!!.add(SwipeMesh(screenHeight, surface))
+            PaintType.ERASER -> clearAll()
         }
     }
 
@@ -145,18 +145,18 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
                     event.getY(pointerIndex).toDouble()
                 )
 
-                val lastMesh = meshes!!.last()
-                if (lastMesh is Pen) {
-                    lastMesh.addPoint(meshPoint.point, ColorV4(0f, 0f, 1f, 1f))
-                } else if (lastMesh is SwipeMesh) {
-                    if (prevPointerPoint == null) {
-                        meshPoint.color = ColorV4(1f, 0f, 0f, 1f)
-                    } else {
-                        val screenHypotenuse = hypot(screenWidth.toDouble(), screenHeight.toDouble()).toFloat()
-                        meshPoint.color = MeshPoint.getDistanceColor(prevPointerPoint!!, meshPoint, screenHypotenuse)
+                when (val lastPaint = paints!!.last()) {
+                    is Pen -> lastPaint.addPoint(meshPoint.point, ColorV4(0f, 0f, 1f, 1f))
+                    is SwipeMesh -> {
+                        if (prevPointerPoint == null) {
+                            meshPoint.color = ColorV4(1f, 0f, 1f, 1f)
+                        } else {
+                            val screenHypotenuse = hypot(screenWidth.toDouble(), screenHeight.toDouble()).toFloat()
+                            meshPoint.color = MeshPoint.getDistanceColor(prevPointerPoint!!, meshPoint, screenHypotenuse)
+                        }
+                        lastPaint.addPoint(meshPoint)
+                        prevPointerPoint = meshPoint
                     }
-                    lastMesh.addPoint(meshPoint)
-                    prevPointerPoint = meshPoint
                 }
             }
         }
@@ -164,11 +164,11 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
 
     fun processEventUp() {}
 
-    fun clear() {
-        for (mesh in meshes!!) {
+    fun clearAll() {
+        for (mesh in paints!!) {
             mesh.clearAllPoint()
         }
-        meshes!!.clear()
+        paints!!.clear()
     }
 
     init {

@@ -1,6 +1,6 @@
 package com.example.kris.handwriting.util
 
-import com.example.kris.handwriting.mesh.MousePoint
+import com.example.kris.handwriting.legacy.MousePoint
 import kotlin.math.abs
 import kotlin.math.hypot
 import kotlin.math.sqrt
@@ -47,24 +47,35 @@ class Vector {
         return Vector()
     }
 
+    fun dist(v2: Vector): Double {
+        val dx = x - v2.x
+        val dy = y - v2.y
+        return sqrt(dx * dx + dy * dy)
+    }
+
+    fun equals(v2: Vector): Boolean {
+        return (dist(v2) < 0.01f)
+    }
+
     companion object {
-        // Convert vector to a string ...
+        // v1 + v2
         fun add(v1: Vector, v2: Vector): Vector {
             return Vector(v1.x + v2.x, v1.y + v2.y)
         }
 
-        // Compute magnitude of vector ....
+        // v1 - v2
         fun sub(v1: Vector, v2: Vector): Vector {
             return Vector(v1.x - v2.x, v1.y - v2.y)
         }
 
-        // Sum of two vectors ....
+        // Scale v1 by scaleFactor
         fun scale(v1: Vector, scaleFactor: Double): Vector {
             return Vector(v1.x * scaleFactor, v1.y * scaleFactor)
         }
 
-        // Rotate +90 degrees
-        fun findPerp(p1: Vector, p2: Vector): Vector {
+        // p1 -> p2
+        // Find Normalized perpendicular vector: Rotate +90 degrees
+        fun calNorPerpV(p1: Vector, p2: Vector): Vector {
             val dir = sub(p2, p1)
             val nDir = dir.normalize()
             return Vector(-1 * nDir.y, nDir.x)

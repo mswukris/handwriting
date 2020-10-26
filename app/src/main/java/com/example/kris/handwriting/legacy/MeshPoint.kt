@@ -1,4 +1,4 @@
-package com.example.kris.handwriting.mesh
+package com.example.kris.handwriting.legacy
 
 import com.example.kris.handwriting.util.ColorV4
 import com.example.kris.handwriting.util.Util.colorIntensityArray
@@ -27,10 +27,6 @@ class MeshPoint {
         this.age = age
     }
 
-    fun getAgeFade(): Float{
-        return 5f / age
-    }
-
     fun getOlder(){
         age++
     }
@@ -40,8 +36,8 @@ class MeshPoint {
     }
 
     companion object {
-        fun getDistanceColor(p1: MeshPoint, p2: MeshPoint, screenHypotenuse: Float): ColorV4 {
-            val distance = Vector.getHypotenuse(p1.point, p2.point)
+        fun getDistanceColor(prePt: MeshPoint, curPt: MeshPoint, screenHypotenuse: Float): ColorV4 {
+            val distance = Vector.getHypotenuse(prePt.point, curPt.point)
             val relativeDistance = screenHypotenuse / 10.toDouble()
             val index: Int
             index = if (distance > relativeDistance) {
