@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#20242C</color>
+    <color name="colorPrimaryDark">#e3e4e5</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="btn_bkg">@color/colorPrimaryDark</color>
+    <color name="btn_bkg_pressed">@color/colorPrimary</color>
+    <color name="btn_bkg_disabled">@color/colorPrimaryDark</color>
 </resources>

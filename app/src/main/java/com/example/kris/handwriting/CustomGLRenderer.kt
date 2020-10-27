@@ -57,12 +57,12 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
         val elapsed = now - lastTime
 
         render(mtrxProjectionAndView)
-        // Save the current time to see how long it took <img src="http://androidblog.reindustries.com/wp-includes/images/smilies/icon_smile.gif" alt=":)" class="wp-smiley"> .
+        // Save the current time to see how long it took.
         lastTime = now
     }
 
     private fun render(mtrxProjectionAndView: FloatArray) {
-        // clear Screen and Depth Buffer, we have set the clear color as black.
+        // clear Screen and Depth Buffer, we have set the clear color as white.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
         for (aMesh in paints!!) {
             aMesh.draw(mtrxProjectionAndView)
@@ -75,8 +75,9 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
         screenWidth = width.toFloat()
         screenHeight = height.toFloat()
 
-        for (aMesh in paints!!) {
-            aMesh.screenHeight = height.toFloat()
+        // update the screen height info for all paintbase
+        for (paint in paints!!) {
+            paint.screenHeight = height.toFloat()
         }
 
         // Redo the Viewport, making it fullscreen.

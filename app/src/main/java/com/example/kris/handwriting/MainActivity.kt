@@ -1,13 +1,12 @@
 package com.example.kris.handwriting
 
-import android.app.Activity
 import android.opengl.GLSurfaceView
 import android.os.Bundle
 import android.view.View
 import android.widget.RelativeLayout
-import com.example.kris.handwriting.paint.PaintType
+import androidx.appcompat.app.AppCompatActivity
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
     private var glSurfaceView: GLSurfaceView? = null
 
@@ -22,15 +21,17 @@ class MainActivity : Activity() {
         val glParams = RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT)
         layout.addView(glSurfaceView, glParams)
 
-        findViewById<View>(R.id.eraser).setOnClickListener {
-            (glSurfaceView as CustomGLSurface).paintType = PaintType.ERASER
-        }
-        findViewById<View>(R.id.pencil).setOnClickListener {
-            (glSurfaceView as CustomGLSurface).paintType = PaintType.PEN
-        }
-        findViewById<View>(R.id.brush).setOnClickListener {
-            (glSurfaceView as CustomGLSurface).paintType = PaintType.BRUSH
-        }
+        supportFragmentManager.beginTransaction().replace(R.id.paintToolsContainer, PaintToolFragment()).commit()
+
+//        findViewById<View>(R.id.eraser).setOnClickListener {
+//            (glSurfaceView as CustomGLSurface).paintType = PaintType.ERASER
+//        }
+//        findViewById<View>(R.id.pencil).setOnClickListener {
+//            (glSurfaceView as CustomGLSurface).paintType = PaintType.PEN
+//        }
+//        findViewById<View>(R.id.brush).setOnClickListener {
+//            (glSurfaceView as CustomGLSurface).paintType = PaintType.BRUSH
+//        }
     }
 
     override fun onPause() {
@@ -43,3 +44,4 @@ class MainActivity : Activity() {
         glSurfaceView!!.onResume()
     }
 }
+

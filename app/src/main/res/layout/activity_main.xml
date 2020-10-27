@@ -12,45 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
-        android:id="@+id/toolBox"
-        android:orientation="horizontal"
+    <FrameLayout
+        android:id="@+id/paintToolsContainer"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_alignParentBottom="true"
-        android:layout_margin="10dp">
-
-        <ImageButton
-            android:id="@+id/eraser"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/eraser"
-            android:scaleType="fitCenter"/>
-
-        <ImageButton
-            android:id="@+id/pencil"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/pencil"
-            android:scaleType="fitCenter" />
-
-        <ImageButton
-            android:id="@+id/brush"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/brush"
-            android:scaleType="fitCenter"/>
-
-        <ImageButton
-            android:id="@+id/palette"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/palette"
-            android:scaleType="fitCenter"/>
-    </LinearLayout>
+        android:layout_height="@dimen/paintToolbar_height"
+        android:layout_margin="@dimen/paintToolbar_margin"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>
