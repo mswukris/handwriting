@@ -1,9 +1,12 @@
 package com.example.kris.handwriting.paint
 
+import android.opengl.GLES20
 import com.example.kris.handwriting.CustomGLSurface
+import com.example.kris.handwriting.CustomShader
 import com.example.kris.handwriting.IOpenGLObject
 import com.example.kris.handwriting.legacy.MeshPoint
 import com.example.kris.handwriting.util.ColorV4
+import com.example.kris.handwriting.util.Smoother
 import com.example.kris.handwriting.util.Vector
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -24,7 +27,37 @@ abstract class PaintBase(var screenHeight: Float, var glSurface: CustomGLSurface
     var indexBuffer: IntBuffer = ByteBuffer.allocateDirect(0).asIntBuffer()
     var colorBuffer: FloatBuffer = ByteBuffer.allocateDirect(0).asFloatBuffer()
 
+    var smoother = Smoother
+    var strokeThickness = 40
+
     abstract fun calPoints()
+
+    override fun draw(m: FloatArray?) {
+        calPoints()
+
+//        Log.d("gl_swipe", "before");
+        GLES20.glUseProgram(CustomShader.sp_mouse_swipe)
+
+        val mtrxhandle = GLES20.glGetUniformLocation(CustomShader.sp_mouse_swipe, "uMVPMatrix")
+        GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0)
+        GLES20.glUseProgram(CustomShader.sp_mouse_swipe)
+//        Log.d("gl_swipe","after");
+
+        setupBuffers()
+        GLES20.glEnable(GLES20.GL_BLEND)
+        GLES20.glBlendFunc(GLES20.GL_SRC_ALPHA, GLES20.GL_ONE_MINUS_SRC_ALPHA)
+
+        val mPositionHandle = GLES20.glGetAttribLocation(CustomShader.sp_mouse_swipe, "vPosition")
+        GLES20.glEnableVertexAttribArray(mPositionHandle)
+        GLES20.glVertexAttribPointer(mPositionHandle, 2, GLES20.GL_FLOAT, false, 0, swipeBuffer)
+
+        val colorHandle = GLES20.glGetAttribLocation(CustomShader.sp_mouse_swipe, "a_color")
+        GLES20.glEnableVertexAttribArray(colorHandle)
+        GLES20.glVertexAttribPointer(colorHandle, 4, GLES20.GL_FLOAT, false, 0, colorBuffer)
+
+        GLES20.glDrawElements(GLES20.GL_TRIANGLE_STRIP, indices.size, GLES20.GL_UNSIGNED_INT, indexBuffer)
+        GLES20.glDisableVertexAttribArray(mPositionHandle)
+    }
 
     private fun genVertexArray(): FloatArray {
         val inSize = segments.size
