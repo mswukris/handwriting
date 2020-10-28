@@ -35,13 +35,11 @@ abstract class PaintBase(var screenHeight: Float, var glSurface: CustomGLSurface
     override fun draw(m: FloatArray?) {
         calPoints()
 
-//        Log.d("gl_swipe", "before");
         GLES20.glUseProgram(CustomShader.sp_mouse_swipe)
 
         val mtrxhandle = GLES20.glGetUniformLocation(CustomShader.sp_mouse_swipe, "uMVPMatrix")
         GLES20.glUniformMatrix4fv(mtrxhandle, 1, false, m, 0)
         GLES20.glUseProgram(CustomShader.sp_mouse_swipe)
-//        Log.d("gl_swipe","after");
 
         setupBuffers()
         GLES20.glEnable(GLES20.GL_BLEND)
@@ -81,7 +79,7 @@ abstract class PaintBase(var screenHeight: Float, var glSurface: CustomGLSurface
             colorArray[j] = segment.color.R
             colorArray[j + 1] = segment.color.G
             colorArray[j + 2] = segment.color.B
-            colorArray[j + 3] = 1f
+            colorArray[j + 3] = segment.color.A
             j += 4
         }
         val bb = ByteBuffer.allocateDirect(floatArray.size * 4)

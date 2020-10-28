@@ -24,7 +24,8 @@ class ItemListDialogFragment(val listener: PaintTypeChangedListener) : BottomShe
     val toolList = listOf(
         R.drawable.paint_tool_eraser,
         R.drawable.paint_tool_pen,
-        R.drawable.paint_tool_brush
+        R.drawable.paint_tool_brush,
+        R.drawable.paint_tool_marker
     )
 
     var selectedPosition = 1

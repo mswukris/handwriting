@@ -1,7 +1,11 @@
 package com.example.kris.handwriting.util
 
 
-data class ColorV4(val R: Float, val G: Float, val B: Float, val A: Float) {
+data class ColorV4(val R: Float, val G: Float, val B: Float, var A: Float) {
+
+    fun setAlpha(a: Float) {
+        A = a
+    }
 
     fun gradientWhite(scaleFactor: Float): ColorV4 {
         return ColorV4(
@@ -12,12 +16,12 @@ data class ColorV4(val R: Float, val G: Float, val B: Float, val A: Float) {
         )
     }
 
-    fun gradientBlack(scaleFactor: Float): ColorV4 {
+    fun gradientTransparent(scaleFactor: Float): ColorV4 {
         return ColorV4(
-            R * scaleFactor,
-            G * scaleFactor,
-            B * scaleFactor,
-            A
+            R,
+            G,
+            B,
+            A * scaleFactor
         )
     }
 

@@ -26,14 +26,10 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     var paints: ArrayList<PaintBase>? = null
     var paintType = PaintType.PEN
 
-    var mMousePoints: ConcurrentLinkedQueue<MousePoint>? = null
-    private lateinit var mousePoints: FloatArray
-
     var screenWidth = 1280f
     var screenHeight = 768f
     private var lastTime: Long = System.currentTimeMillis() + 100
 
-    private var prevPointerPoint: MeshPoint? = null
     private var surfaceLoaded = false
 
     fun onPause() {
@@ -60,8 +56,8 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     private fun render(mtrxProjectionAndView: FloatArray) {
         // clear Screen and Depth Buffer, we have set the clear color as white.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        for (aMesh in paints!!) {
-            aMesh.draw(mtrxProjectionAndView)
+        for (paint in paints!!) {
+            paint.draw(mtrxProjectionAndView)
         }
     }
 
@@ -93,7 +89,6 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
 
         // Calculate the projection and view transformation
         Matrix.multiplyMM(mtrxProjectionAndView, 0, mtrxProjection, 0, mtrxView, 0)
-        mousePoints = FloatArray(4)
         surfaceLoaded = true
         Log.d(tag, "Surface Changed end")
     }
@@ -103,7 +98,6 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
         surfaceLoaded = false
         
         paints = ArrayList()
-        mMousePoints = ConcurrentLinkedQueue()
 
         // Set our shader program
         GLES20.glClearColor(1f, 1f, 1f, 1f)
@@ -125,11 +119,15 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     }
 
     fun processEventDown(event: MotionEvent) {
-        when(paintType) {
-            PaintType.ERASER -> clearAll()
-            PaintType.PEN -> paints!!.add(Pen(screenHeight, surface))
-            PaintType.SWIPE_MESH -> paints!!.add(SwipeMesh(screenHeight, surface))
+        paints?.let {
+            when(paintType) {
+                PaintType.ERASER -> clearAll()
+                PaintType.PEN -> it.add(Pen(screenHeight, surface))
+                PaintType.BRUSH -> it.add(Brush(screenHeight, surface))
+                PaintType.MARKER -> it.add(Marker(screenHeight, surface))
+            }
         }
+
     }
 
     fun processEventMove(event: MotionEvent) {
@@ -144,18 +142,9 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
 
                 if (paints.isNullOrEmpty()) return
                 when (val lastPaint = paints!!.last()) {
-                    is Pen -> lastPaint.addPoint(meshPoint.point, ColorV4(0f, 0f, 1f, 1f))
-                    is SwipeMesh -> {
-                        lastPaint.addPoint(meshPoint.point, ColorV4(1f, 0f, 1f, 1f))
-//                        if (prevPointerPoint == null) {
-//                            meshPoint.color = ColorV4(1f, 0f, 1f, 1f)
-//                        } else {
-//                            val screenHypotenuse = hypot(screenWidth.toDouble(), screenHeight.toDouble()).toFloat()
-//                            meshPoint.color = MeshPoint.getDistanceColor(prevPointerPoint!!, meshPoint, screenHypotenuse)
-//                        }
-//                        lastPaint.addPoint(meshPoint)
-//                        prevPointerPoint = meshPoint
-                    }
+                    is Pen -> lastPaint.addPoint(meshPoint.point, ColorV4(1f, 0f, 0f, 1f))
+                    is Brush -> lastPaint.addPoint(meshPoint.point, ColorV4(0f, 1f, 0f, 1f))
+                    is Marker -> lastPaint.addPoint(meshPoint.point, ColorV4(0f, 0f, 1f, 1f))
                 }
             }
         }
