@@ -1,7 +1,5 @@
 package com.example.kris.handwriting.util
 
-import android.util.Log
-
 object Util {
 
     val colorIntensityArray = floatArrayOf(

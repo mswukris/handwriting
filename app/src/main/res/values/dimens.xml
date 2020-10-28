@@ -3,5 +3,7 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="paintToolbar_margin">10dp</dimen>
-    <dimen name="paintToolbar_height">40dp</dimen>
+    <dimen name="paintToolbar_size">48dp</dimen>
+    <dimen name="list_item_spacing">8dp</dimen>
+    <dimen name="list_item_spacing_half">4dp</dimen>
 </resources>

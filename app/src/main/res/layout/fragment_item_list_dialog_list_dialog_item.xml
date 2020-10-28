@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageButton xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tool"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/list_item_spacing_half"
+    android:background="@drawable/paint_tool_btn_bg"
+    android:adjustViewBounds="true"
+    android:scaleType="centerInside"
+    android:src="@drawable/paint_tool_eraser" />
