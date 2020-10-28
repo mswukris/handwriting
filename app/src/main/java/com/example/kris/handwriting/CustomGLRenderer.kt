@@ -60,8 +60,8 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
     private fun render(mtrxProjectionAndView: FloatArray) {
         // clear Screen and Depth Buffer, we have set the clear color as white.
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        for (aMesh in paints!!) {
-            aMesh.draw(mtrxProjectionAndView)
+        for (paint in paints!!) {
+            paint.draw(mtrxProjectionAndView)
         }
     }
 
@@ -129,6 +129,7 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
             PaintType.ERASER -> clearAll()
             PaintType.PEN -> paints!!.add(Pen(screenHeight, surface))
             PaintType.SWIPE_MESH -> paints!!.add(SwipeMesh(screenHeight, surface))
+            PaintType.MARKER -> paints!!.add(Marker(screenHeight, surface))
         }
     }
 
@@ -144,7 +145,7 @@ class CustomGLRenderer(private var surface: CustomGLSurface) : GLSurfaceView.Ren
 
                 if (paints.isNullOrEmpty()) return
                 when (val lastPaint = paints!!.last()) {
-                    is Pen -> lastPaint.addPoint(meshPoint.point, ColorV4(0f, 0f, 1f, 1f))
+                    is Pen, is Marker -> lastPaint.addPoint(meshPoint.point, ColorV4(0f, 0f, 1f, 1f))
                     is SwipeMesh -> {
                         lastPaint.addPoint(meshPoint.point, ColorV4(1f, 0f, 1f, 1f))
 //                        if (prevPointerPoint == null) {
