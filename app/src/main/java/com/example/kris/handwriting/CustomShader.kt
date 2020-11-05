@@ -5,10 +5,12 @@ import android.opengl.GLES20
 object CustomShader {
     const val vs_mouseSwipe = "uniform mat4 uMVPMatrix;" +
             "attribute vec4 vPosition;" +
+            "uniform float pointSize;" +
             "attribute vec4 a_color;" +
             "varying vec4 v_color;" +
             "void main() {" +
             "  gl_Position = uMVPMatrix * vPosition;" +
+            "  gl_PointSize = pointSize;" +
             "  v_color = a_color;" +
             "}"
     const val fs_mouseSwipe = "precision mediump float;" +
